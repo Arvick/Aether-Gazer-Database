@@ -33,6 +33,16 @@ def create_tables(connection:sqlite3.Connection):
             set_effects TEXT NOT NULL,
         ) STRICT;
     ''')
+    connection.execute('''
+        CREATE TABLE IF NOT EXISTS sigil_modifier(
+            modifier_name TEXT NOT NULL CHECK (length(modifier_name) > 0),
+            set_name TEXT NOT NULL CHECK (length(set_name) > 0),
+            odd_or_even ENUM('Odd', 'Even') NULL,
+            PRIMARY KEY (modifier_name, odd_or_even),
+            FOREIGN KEY (modifier_name) REFERENCES modifier(modifier_name),
+            FOREIGN KEY (set_name) REFERENCES sigil(set_name)
+        ) STRICT;
+    ''')
 
 
 
