@@ -4,6 +4,7 @@ import sqlite3
 # TODO: table for aether codes
 # TODO: Separate tables to hold Skill Descs + 
 # TODO: enable PRAGMA foreign_keys = ON; somwhere when creating connection
+# TODO: separate creation of each table into its own function?
 def create_tables(connection:sqlite3.Connection):
     # creates the tables to be used in the DB
     connection.execute('''
@@ -30,6 +31,7 @@ def create_tables(connection:sqlite3.Connection):
             set_effects TEXT NOT NULL
         ) STRICT;
     ''')
+    connection.commit()
     connection.execute('''
         CREATE TABLE IF NOT EXISTS sigil_modifier(
             modifier_name TEXT NOT NULL CHECK (length(modifier_name) > 0),
@@ -40,11 +42,12 @@ def create_tables(connection:sqlite3.Connection):
             FOREIGN KEY (set_name) REFERENCES sigil(set_name)
         ) STRICT;
     ''')
+    connection.commit()
     # each tier has their own access key/functor atk boosts
     # use modifier_name to get the "name" column
     connection.execute('''
         CREATE TABLE IF NOT EXISTS functor(
-            functor_name TEXT NOT NULL CHECK (length(functor_name) > 0),
+            functor_name TEXT NOT NULL UNIQUE CHECK (length(functor_name) > 0),
             gen_zone ENUM('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim') NULL,
             tier UNSIGNED INTEGER NOT NULL CHECK (tier >=3 AND tier <= 5),
             functor_power_desc TEXT NOT NULL CHECK (length(functor_power_desc) > 0),
@@ -54,7 +57,19 @@ def create_tables(connection:sqlite3.Connection):
             FOREIGN KEY (sig_modifier) REFERENCES modifier(modifier_name)
         ) STRICT;
     ''')
-
+    connection.commit()
+    #TODO: find out all the possible skill types for skill_type
+    connection.execute('''
+        CREATE TABLE IF NOT EXISTS skill(
+        skill_name TEXT NOT NULL CHECK (length(skill_name) > 0),
+        slot ENUM('normal_atk', 'skill1', 'skill2', 'skill3', 'ult_skill', 'dodge_skill') NULL,
+        skill_cd UNSIGNED INTEGER,
+        skill_cost_type ENUM('Rage', 'Energy', 'Traces', 'Divine Grace'),
+        skill_cost_quant UNSIGNED INTEGER CHECK (skill_cost_quant > 0),
+        skill_type ENUM('Evolving', 'Set-up', 'Divergent', 'Switch', 'Channeling', 'Charge') NULL
+        ) STRICT;
+    ''')
+    connection.commit()
 
 
 
