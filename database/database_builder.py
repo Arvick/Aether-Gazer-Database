@@ -21,7 +21,7 @@ def create_tables(connection:sqlite3.Connection):
             skill2_name TEXT NOT NULL CHECK (length(skill2_name) > 0),
             skill3_name TEXT NOT NULL CHECK (length(skill3_name) > 0),
             ult_skill_name TEXT NOT NULL CHECK (length(ult_skill_name) > 0),
-            dodge_skill_name TEXT NOT NULL CHECK (length(dodge_skill_name) > 0),
+            dodge_skill_name TEXT NOT NULL CHECK (length(dodge_skill_name) > 0),            
             PRIMARY KEY (modifier_name, name)
         ) STRICT;
         ''')
@@ -75,6 +75,18 @@ def create_tables(connection:sqlite3.Connection):
         ) STRICT;
     ''')
     connection.commit()
+    connection.execute('''
+        CREATE TABLE IF NOT EXISTS aether_codes(
+            ac_type TEXT NOT NULL CHECK (ac_type IN ('RED', 'YELLOW', 'BLUE')),
+            ac_slot INTEGER NOT NULL CHECK (ac_slot >= 1 AND ac_slot <= 3),
+            ac_desc TEXT NOT NULL CHECK (length(ac_desc) > 0)
+            modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
+            PRIMARY KEY (modifier_name, ac_type, ac_slot),
+            FOREIGN KEY (modifier_name) REFERENCES modifier(modifier_name)
+        ) STRICT;
+    ''')
+    connection.commit()
+
     
 
     
