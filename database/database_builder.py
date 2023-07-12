@@ -5,9 +5,9 @@ import sqlite3
 # TODO: Separate tables to hold Skill Descs + 
 # TODO: enable PRAGMA foreign_keys = ON; somwhere when creating connection
 # TODO: separate creation of each table into its own function?
-def create_tables(connection:sqlite3.Connection):
+def create_tables(connection:sqlite3.Connection) -> None:
     # creates the tables to be used in the DB
-    connection.execute('''
+    _SQL_STATEMENTS = ['''
         CREATE TABLE IF NOT EXISTS modifier(
             name TEXT NOT NULL CHECK (length(name) > 0),
             modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
@@ -23,17 +23,13 @@ def create_tables(connection:sqlite3.Connection):
             ult_skill_name TEXT NOT NULL CHECK (length(ult_skill_name) > 0),
             dodge_skill_name TEXT NOT NULL CHECK (length(dodge_skill_name) > 0),            
             PRIMARY KEY (modifier_name, name)
-        ) STRICT;
-        ''')
-    connection.commit()
-    connection.execute('''
+        ) STRICT; ''',
+        '''
         CREATE TABLE IF NOT EXISTS sigil(
             set_name TEXT NOT NULL PRIMARY KEY CHECK (length(set_name) > 0),
             set_effects TEXT NOT NULL CHECK (length(set_effects) > 0)
-        ) STRICT;
-    ''')
-    connection.commit()
-    connection.execute('''
+        ) STRICT; ''',
+        '''
         CREATE TABLE IF NOT EXISTS sigil_modifier(
             modifier_name TEXT NOT NULL CHECK (length(modifier_name) > 0),
             set_name TEXT NOT NULL CHECK (length(set_name) > 0),
@@ -41,12 +37,8 @@ def create_tables(connection:sqlite3.Connection):
             PRIMARY KEY (modifier_name, odd_or_even),
             FOREIGN KEY (modifier_name) REFERENCES modifier(modifier_name),
             FOREIGN KEY (set_name) REFERENCES sigil(set_name)
-        ) STRICT;
-    ''')
-    connection.commit()
-    # each tier has their own access key/functor atk boosts
-    # use modifier_name to get the "name" column
-    connection.execute('''
+        ) STRICT; ''',
+        '''
         CREATE TABLE IF NOT EXISTS functor(
             functor_name TEXT NOT NULL UNIQUE CHECK (length(functor_name) > 0),
             gen_zone TEXT NOT NULL CHECK (gen_zone IN ('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim')),
@@ -56,11 +48,8 @@ def create_tables(connection:sqlite3.Connection):
             sig_modifier TEXT NOT NULL UNIQUE CHECK (length(sig_modifier) > 0),
             PRIMARY KEY (functor_name, sig_modifier),
             FOREIGN KEY (sig_modifier) REFERENCES modifier(modifier_name)
-        ) STRICT;
-    ''')
-    connection.commit()
-    #TODO: find out all the possible skill types for skill_type
-    connection.execute('''
+        ) STRICT; ''',
+        '''
         CREATE TABLE IF NOT EXISTS skill(
             skill_name TEXT NOT NULL CHECK (length(skill_name) > 0),
             skill_desc TEXT NOT NULL CHECK (length(skill_desc) > 0)
@@ -72,10 +61,8 @@ def create_tables(connection:sqlite3.Connection):
             modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
             PRIMARY KEY (skill_name, modifier_name),
             FOREIGN KEY (modifier_name) REFERENCES modifier(modifier_name)
-        ) STRICT;
-    ''')
-    connection.commit()
-    connection.execute('''
+        ) STRICT; ''',
+        '''
         CREATE TABLE IF NOT EXISTS aether_codes(
             ac_type TEXT NOT NULL CHECK (ac_type IN ('RED', 'YELLOW', 'BLUE')),
             ac_slot INTEGER NOT NULL CHECK (ac_slot >= 1 AND ac_slot <= 3),
@@ -84,8 +71,12 @@ def create_tables(connection:sqlite3.Connection):
             PRIMARY KEY (modifier_name, ac_type, ac_slot),
             FOREIGN KEY (modifier_name) REFERENCES modifier(modifier_name)
         ) STRICT;
-    ''')
-    connection.commit()
+    ''']
+    # for functor: # each tier has their own access key/functor atk boosts
+    # use modifier_name to get the "name" column
+    for statement in _SQL_STATEMENTS:
+        connection.execute(statement)
+        connection.commit()
 
     
 
