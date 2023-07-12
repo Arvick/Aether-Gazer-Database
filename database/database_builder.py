@@ -22,13 +22,15 @@ def create_tables(connection:sqlite3.Connection):
             skill3_name TEXT NOT NULL CHECK (length(skill3_name) > 0),
             ult_skill_name TEXT NOT NULL CHECK (length(ult_skill_name) > 0),
             dodge_skill_name TEXT NOT NULL CHECK (length(dodge_skill_name) > 0),
+            rec_sigils_odd TEXT NOT NULL,
+            rec_sigils_even TEXT NOT NULL
         ) STRICT;
         ''')
     connection.commit()
     connection.execute('''
         CREATE TABLE IF NOT EXISTS sigil(
             set_name TEXT NOT NULL PRIMARY KEY CHECK (length(set_name) > 0),
-            set_effects TEXT NOT NULL
+            set_effects TEXT NOT NULL CHECK (length(set_effects) > 0)
         ) STRICT;
     ''')
     connection.commit()
@@ -62,6 +64,7 @@ def create_tables(connection:sqlite3.Connection):
     connection.execute('''
         CREATE TABLE IF NOT EXISTS skill(
             skill_name TEXT NOT NULL CHECK (length(skill_name) > 0),
+            skill_desc TEXT NOT NULL CHECK (length(skill_desc) > 0)
             slot TEXT NOT NULL CHECK (slot IN ('normal_atk', 'skill1', 'skill2', 'skill3', 'ult_skill', 'dodge_skill')),
             skill_cd INTEGER NOT NULL CHECK (skill_cd >= 0),
             skill_cost_type TEXT NOT NULL CHECK (skill_cost_type ('Rage', 'Energy', 'Traces', 'Divine Grace')),
@@ -70,8 +73,6 @@ def create_tables(connection:sqlite3.Connection):
         ) STRICT;
     ''')
     connection.commit()
-
-
 
 
     
