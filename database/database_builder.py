@@ -78,9 +78,17 @@ def create_tables(connection:sqlite3.Connection) -> None:
         connection.execute(statement)
         connection.commit()
 
-    
-
-    
 
 
+
+def create_connection():
+    pass
+
+
+def insert_data():
+    pass
+
+
+if __name__ == "__main__":
+    pass
 
