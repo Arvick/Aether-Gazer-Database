@@ -11,10 +11,10 @@ def create_tables(connection:sqlite3.Connection):
         CREATE TABLE IF NOT EXISTS modifier(
             name TEXT NOT NULL CHECK (length(name) > 0),
             modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0) PRIMARY KEY,
-            combat_type ENUM('Melee', 'Ranged') NULL,
-            gen_zone ENUM('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim') NULL,
-            dmg_type ENUM('Physical', 'Wind', 'Fire', 'Thunder', 'Shadow', 'Light', 'Ice', 'Water') NULL,
-            combat_rsc ENUM('Rage', 'Energy', 'Traces', 'Divine Grace') NULL,
+            combat_type TEXT NOT NULL CHECK (combat_type IN ('Melee', 'Ranged')),
+            gen_zone TEXT NOT NULL CHECK (gen_zone IN ('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim')),
+            dmg_type TEXT NOT NULL CHECK (dmg_type IN ('Physical', 'Wind', 'Fire', 'Thunder', 'Shadow', 'Light', 'Ice', 'Water')),
+            combat_rsc TEXT NOT NULL CHECK (combat_rsc IN ('Rage', 'Energy', 'Traces', 'Divine Grace')),
             access_key TEXT NOT NULL CHECK (length(access_key) > 0),
             normal_atk_name TEXT NOT NULL CHECK (length(normal_atk_name) > 0),
             skill1_name TEXT NOT NULL CHECK (length(skill1_name) > 0),
@@ -36,7 +36,7 @@ def create_tables(connection:sqlite3.Connection):
         CREATE TABLE IF NOT EXISTS sigil_modifier(
             modifier_name TEXT NOT NULL CHECK (length(modifier_name) > 0),
             set_name TEXT NOT NULL CHECK (length(set_name) > 0),
-            odd_or_even ENUM('Odd', 'Even') NULL,
+            odd_or_even TEXT NOT NULL (CHECK odd_or_even IN ('Odd', 'Even')),
             PRIMARY KEY (modifier_name, odd_or_even),
             FOREIGN KEY (modifier_name) REFERENCES modifier(modifier_name),
             FOREIGN KEY (set_name) REFERENCES sigil(set_name)
@@ -48,8 +48,8 @@ def create_tables(connection:sqlite3.Connection):
     connection.execute('''
         CREATE TABLE IF NOT EXISTS functor(
             functor_name TEXT NOT NULL UNIQUE CHECK (length(functor_name) > 0),
-            gen_zone ENUM('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim') NULL,
-            tier UNSIGNED INTEGER NOT NULL CHECK (tier >=3 AND tier <= 5),
+            gen_zone TEXT NOT NULL CHECK (gen_zone IN ('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim')),
+            tier INTEGER NOT NULL CHECK (tier >=3 AND tier <= 5),
             functor_power_desc TEXT NOT NULL CHECK (length(functor_power_desc) > 0),
             functor_lore TEXT NOT NULL CHECK (length(functor_lore) > 0),
             sig_modifier TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
@@ -61,12 +61,12 @@ def create_tables(connection:sqlite3.Connection):
     #TODO: find out all the possible skill types for skill_type
     connection.execute('''
         CREATE TABLE IF NOT EXISTS skill(
-        skill_name TEXT NOT NULL CHECK (length(skill_name) > 0),
-        slot ENUM('normal_atk', 'skill1', 'skill2', 'skill3', 'ult_skill', 'dodge_skill') NULL,
-        skill_cd UNSIGNED INTEGER,
-        skill_cost_type ENUM('Rage', 'Energy', 'Traces', 'Divine Grace'),
-        skill_cost_quant UNSIGNED INTEGER CHECK (skill_cost_quant > 0),
-        skill_type ENUM('Evolving', 'Set-up', 'Divergent', 'Switch', 'Channeling', 'Charge') NULL
+            skill_name TEXT NOT NULL CHECK (length(skill_name) > 0),
+            slot TEXT NOT NULL CHECK (slot IN ('normal_atk', 'skill1', 'skill2', 'skill3', 'ult_skill', 'dodge_skill')),
+            skill_cd INTEGER NOT NULL CHECK (skill_cd >= 0),
+            skill_cost_type TEXT NOT NULL CHECK (skill_cost_type ('Rage', 'Energy', 'Traces', 'Divine Grace')),
+            skill_cost_quant INTEGER NOT NULL CHECK (skill_cost_quant >= 0),
+            skill_type TEXT NOT NULL CHECK (skill_type IN ('Evolving', 'Set-up', 'Divergent', 'Switch', 'Channeling', 'Charge'))
         ) STRICT;
     ''')
     connection.commit()
