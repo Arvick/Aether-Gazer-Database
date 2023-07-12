@@ -10,7 +10,7 @@ def create_tables(connection:sqlite3.Connection):
     connection.execute('''
         CREATE TABLE IF NOT EXISTS modifier(
             name TEXT NOT NULL CHECK (length(name) > 0),
-            modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0) PRIMARY KEY,
+            modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
             combat_type TEXT NOT NULL CHECK (combat_type IN ('Melee', 'Ranged')),
             gen_zone TEXT NOT NULL CHECK (gen_zone IN ('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim')),
             dmg_type TEXT NOT NULL CHECK (dmg_type IN ('Physical', 'Wind', 'Fire', 'Thunder', 'Shadow', 'Light', 'Ice', 'Water')),
@@ -22,8 +22,7 @@ def create_tables(connection:sqlite3.Connection):
             skill3_name TEXT NOT NULL CHECK (length(skill3_name) > 0),
             ult_skill_name TEXT NOT NULL CHECK (length(ult_skill_name) > 0),
             dodge_skill_name TEXT NOT NULL CHECK (length(dodge_skill_name) > 0),
-            rec_sigils_odd TEXT NOT NULL,
-            rec_sigils_even TEXT NOT NULL
+            PRIMARY KEY (modifier_name, name)
         ) STRICT;
         ''')
     connection.commit()
@@ -54,8 +53,8 @@ def create_tables(connection:sqlite3.Connection):
             tier INTEGER NOT NULL CHECK (tier >=3 AND tier <= 5),
             functor_power_desc TEXT NOT NULL CHECK (length(functor_power_desc) > 0),
             functor_lore TEXT NOT NULL CHECK (length(functor_lore) > 0),
-            sig_modifier TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
-            PRIMARY KEY (functor_name, modifier_name),
+            sig_modifier TEXT NOT NULL UNIQUE CHECK (length(sig_modifier) > 0),
+            PRIMARY KEY (functor_name, sig_modifier),
             FOREIGN KEY (sig_modifier) REFERENCES modifier(modifier_name)
         ) STRICT;
     ''')
@@ -69,11 +68,14 @@ def create_tables(connection:sqlite3.Connection):
             skill_cd INTEGER NOT NULL CHECK (skill_cd >= 0),
             skill_cost_type TEXT NOT NULL CHECK (skill_cost_type ('Rage', 'Energy', 'Traces', 'Divine Grace')),
             skill_cost_quant INTEGER NOT NULL CHECK (skill_cost_quant >= 0),
-            skill_type TEXT NOT NULL CHECK (skill_type IN ('Evolving', 'Set-up', 'Divergent', 'Switch', 'Channeling', 'Charge'))
+            skill_type TEXT NOT NULL CHECK (skill_type IN ('Evolving', 'Set-up', 'Divergent', 'Switch', 'Channeling', 'Charge')),
+            modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
+            PRIMARY KEY (skill_name, modifier_name),
+            FOREIGN KEY (modifier_name) REFERENCES modifier(modifier_name)
         ) STRICT;
     ''')
     connection.commit()
-
+    
 
     
 
