@@ -1,12 +1,13 @@
 # This module creates the structure of the database, as well as inserts content into it
 import sqlite3
+from pathlib import Path
 # images?
 # TODO: table for aether codes
 # TODO: Separate tables to hold Skill Descs + 
 # TODO: enable PRAGMA foreign_keys = ON; somwhere when creating connection
 # TODO: separate creation of each table into its own function?
 def create_tables(connection:sqlite3.Connection) -> None:
-    "creates the tables to be used in the DB"
+    """creates the tables to be used in the DB"""
     _SQL_STATEMENTS = ['''
         CREATE TABLE IF NOT EXISTS modifier(
             name TEXT NOT NULL CHECK (length(name) > 0),
@@ -112,17 +113,21 @@ def form_statement():
     pass
 
 
-def create_connection():
-    pass
+def create_connection() -> sqlite3.Connection:
+    """creates a Sqlite3 Connection to be used for inserting data."""
+    Path.touch(Path.cwd() / "aether_gazer.db")
+    connection = sqlite3.connect(Path.cwd() / "aether_gazer.db")
+    return connection
 
 
 def _main():
-
     print("Welcome to the AG Database Builder. Would you like to \
-        insert data into the databases?")
-    response = input("Enter Y to proceed, else leave blank.").strip().capitalize()
-    while response != "Y":
-        connection = create_connection()
+insert data into the databases?")
+    response = input("Enter Y to proceed, else enter anything else. ").strip().capitalize()
+    connection = create_connection()
+    while response == "Y":
+        break
+    connection.close()
 
     
 if __name__ == "__main__":
