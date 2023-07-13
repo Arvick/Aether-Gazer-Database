@@ -4,9 +4,8 @@ from pathlib import Path
 # images?
 # TODO: table for aether codes
 # TODO: Separate tables to hold Skill Descs + 
-# TODO: enable PRAGMA foreign_keys = ON; somwhere when creating connection
 # TODO: separate creation of each table into its own function?
-def create_tables(connection:sqlite3.Connection) -> None:
+def _create_tables(connection:sqlite3.Connection) -> None:
     """creates the tables to be used in the DB"""
     _SQL_STATEMENTS = ['''
         CREATE TABLE IF NOT EXISTS modifier(
@@ -34,7 +33,7 @@ def create_tables(connection:sqlite3.Connection) -> None:
         CREATE TABLE IF NOT EXISTS sigil_modifier(
             modifier_name TEXT NOT NULL CHECK (length(modifier_name) > 0),
             set_name TEXT NOT NULL CHECK (length(set_name) > 0),
-            odd_or_even TEXT NOT NULL (CHECK odd_or_even IN ('Odd', 'Even')),
+            odd_or_even TEXT NOT NULL CHECK (odd_or_even IN ('Odd', 'Even')),
             PRIMARY KEY (modifier_name, odd_or_even),
             FOREIGN KEY (modifier_name) REFERENCES modifier(modifier_name),
             FOREIGN KEY (set_name) REFERENCES sigil(set_name)
@@ -53,10 +52,10 @@ def create_tables(connection:sqlite3.Connection) -> None:
         '''
         CREATE TABLE IF NOT EXISTS skill(
             skill_name TEXT NOT NULL CHECK (length(skill_name) > 0),
-            skill_desc TEXT NOT NULL CHECK (length(skill_desc) > 0)
+            skill_desc TEXT NOT NULL CHECK (length(skill_desc) > 0),
             slot TEXT NOT NULL CHECK (slot IN ('normal_atk', 'skill1', 'skill2', 'skill3', 'ult_skill', 'dodge_skill')),
             skill_cd INTEGER NOT NULL CHECK (skill_cd >= 0),
-            skill_cost_type TEXT NOT NULL CHECK (skill_cost_type ('Rage', 'Energy', 'Traces', 'Divine Grace')),
+            skill_cost_type TEXT NOT NULL CHECK (skill_cost_type IN ('Rage', 'Energy', 'Traces', 'Divine Grace')),
             skill_cost_quant INTEGER NOT NULL CHECK (skill_cost_quant >= 0),
             skill_type TEXT NOT NULL CHECK (skill_type IN ('Evolving', 'Set-up', 'Divergent', 'Switch', 'Channeling', 'Charge')),
             modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
@@ -67,7 +66,7 @@ def create_tables(connection:sqlite3.Connection) -> None:
         CREATE TABLE IF NOT EXISTS aether_codes(
             ac_type TEXT NOT NULL CHECK (ac_type IN ('RED', 'YELLOW', 'BLUE')),
             ac_slot INTEGER NOT NULL CHECK (ac_slot >= 1 AND ac_slot <= 3),
-            ac_desc TEXT NOT NULL CHECK (length(ac_desc) > 0)
+            ac_desc TEXT NOT NULL CHECK (length(ac_desc) > 0),
             modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
             PRIMARY KEY (modifier_name, ac_type, ac_slot),
             FOREIGN KEY (modifier_name) REFERENCES modifier(modifier_name)
@@ -117,6 +116,8 @@ def create_connection() -> sqlite3.Connection:
     """creates a Sqlite3 Connection to be used for inserting data."""
     Path.touch(Path.cwd() / "aether_gazer.db")
     connection = sqlite3.connect(Path.cwd() / "aether_gazer.db")
+    connection.execute("PRAGMA foreign_keys = ON;")
+    connection.commit()
     return connection
 
 
@@ -125,6 +126,7 @@ def _main():
 insert data into the databases?")
     response = input("Enter Y to proceed, else enter anything else. ").strip().capitalize()
     connection = create_connection()
+    _create_tables(connection)
     while response == "Y":
         break
     connection.close()
