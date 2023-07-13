@@ -79,9 +79,34 @@ def create_tables(connection:sqlite3.Connection) -> None:
         connection.commit()
 
 
+def form_statement():
+    pass
 
 
 def create_connection():
+    pass
+
+def insert_modifier():
+    pass
+
+
+def insert_sigil():
+    pass
+
+
+def insert_sigil_modifier():
+    pass
+
+
+def insert_functor():
+    pass
+
+
+def insert_skill():
+    pass
+
+
+def insert_aether_code():
     pass
 
 
