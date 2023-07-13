@@ -6,7 +6,7 @@ import sqlite3
 # TODO: enable PRAGMA foreign_keys = ON; somwhere when creating connection
 # TODO: separate creation of each table into its own function?
 def create_tables(connection:sqlite3.Connection) -> None:
-    # creates the tables to be used in the DB
+    "creates the tables to be used in the DB"
     _SQL_STATEMENTS = ['''
         CREATE TABLE IF NOT EXISTS modifier(
             name TEXT NOT NULL CHECK (length(name) > 0),
@@ -79,12 +79,7 @@ def create_tables(connection:sqlite3.Connection) -> None:
         connection.commit()
 
 
-def form_statement():
-    pass
 
-
-def create_connection():
-    pass
 
 def insert_modifier():
     pass
@@ -113,7 +108,23 @@ def insert_aether_code():
 def insert_data():
     pass
 
-
-if __name__ == "__main__":
+def form_statement():
     pass
+
+
+def create_connection():
+    pass
+
+
+def _main():
+
+    print("Welcome to the AG Database Builder. Would you like to \
+        insert data into the databases?")
+    response = input("Enter Y to proceed, else leave blank.").strip().capitalize()
+    while response != "Y":
+        connection = create_connection()
+
+    
+if __name__ == "__main__":
+    _main()
 
