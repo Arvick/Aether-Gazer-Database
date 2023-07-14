@@ -81,32 +81,57 @@ def _create_tables(connection:sqlite3.Connection) -> None:
 
 
 
-def insert_modifier():
+def insert_modifier() -> int:
     pass
 
 
-def insert_sigil():
+def insert_sigil() -> int:
     pass
 
 
-def insert_sigil_modifier():
+def insert_sigil_modifier() -> int:
     pass
 
 
-def insert_functor():
+def insert_functor() -> int:
     pass
 
 
-def insert_skill():
+def insert_skill() -> int:
     pass
 
 
-def insert_aether_code():
+def insert_aether_code() -> int:
     pass
 
 
-def insert_data():
-    pass
+def insert_data() -> int:
+    """A central function for handling SQL queries
+    for inserting data.
+    This function will redirect to 1 of 6 functions, each for the different tables.
+    
+    After the operation is completed, a code will be sent back to the user.
+    0 = success, 1 = failure."""
+    _OPTIONS_TO_TABLES = {
+        1:insert_modifier,
+        2:insert_sigil,
+        3:insert_sigil_modifier,
+        4:insert_functor,
+        5:insert_skill,
+        6:insert_aether_code
+    }
+    print("Which table would you like to insert data into?")
+    for key,value in _OPTIONS_TO_TABLES.items():
+        print(key, value)
+    try:
+        response = input("Please enter the ID for the table you wish to interact with. ").strip()
+        if "." not in response and 1 <= int(response) <= 6:
+            call:int = _OPTIONS_TO_TABLES(response)()
+            return call
+        print("Error: Invalid Response.")
+    except ValueError:
+        print("Error: Invalid Response.")
+    return 1
 
 def form_statement():
     pass
@@ -128,7 +153,13 @@ insert data into the databases?")
     connection = create_connection()
     _create_tables(connection)
     while response == "Y":
-        break
+        call:int = insert_data()
+        if not call:
+            print("Operation successful.")
+        else:
+            print("Operation failed. See reasons above")
+        response = input("Would you like to continue? \
+Enter Y to proceed, else enter anything else. ").strip().capitalize()
     connection.close()
 
     
