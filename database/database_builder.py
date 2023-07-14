@@ -90,30 +90,40 @@ def selecting_option(options:tuple[str], prompt:str) -> str:
             return options[int(choice)]
         except ValueError:
             pass
+    print(f"Error: {choice} is not a valid option.")
     raise ValueError
 
 
-def insert_modifier() -> int:
+def insert_modifier(connection:sqlite3.Connection) -> int:
     """For inserting data into the table 'modifier'.
     This function will ask for the parameters as outlined by the SQL table.
-    If an error code arises while accepting data, a error code (1) is returned."""
-    '''name TEXT NOT NULL CHECK (length(name) > 0),
-            modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
-            combat_type TEXT NOT NULL CHECK (combat_type IN ('Melee', 'Ranged')),
-            gen_zone TEXT NOT NULL CHECK (gen_zone IN ('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim')),
-            dmg_type TEXT NOT NULL CHECK (dmg_type IN ('Physical', 'Wind', 'Fire', 'Thunder', 'Shadow', 'Light', 'Ice', 'Water')),
-            combat_rsc TEXT NOT NULL CHECK (combat_rsc IN ('Rage', 'Energy', 'Traces', 'Divine Grace')),
-            access_key TEXT NOT NULL CHECK (length(access_key) > 0),
-            normal_atk_name TEXT NOT NULL CHECK (length(normal_atk_name) > 0),
-            skill1_name TEXT NOT NULL CHECK (length(skill1_name) > 0),
-            skill2_name TEXT NOT NULL CHECK (length(skill2_name) > 0),
-            skill3_name TEXT NOT NULL CHECK (length(skill3_name) > 0),
-            ult_skill_name TEXT NOT NULL CHECK (length(ult_skill_name) > 0),
-            dodge_skill_name TEXT NOT NULL CHECK (length(dodge_skill_name) > 0),'''
+    If an error code arises while accepting data/inserting into the DB, a error code (1) is returned."""
     try:
-        name = input("Enter the real name of the modifier here: ").strip().capitalize()
-        modifier_name = input("Enter the name of the modifier (NOT their original name) here: ").strip().capitalize()
+        name = input("Enter the real name of the modifier here: ").strip()
+        modifier_name = input("Enter the name of the modifier (NOT their original name) here: ").strip()
+        combat_type = selecting_option(('Melee', 'Ranged'), "Enter the option that corresponds to the Modifier's combat type: ")
+        gen_zone = selecting_option(('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim'), "Enter the option that corresponds to the Gen-Zone of the modifier: ")
+        dmg_type = selecting_option(('Physical', 'Wind', 'Fire', 'Thunder', 'Shadow', 'Light', 'Ice', 'Water'), "Enter the option that corresponds to the modifier's damage type: ")
+        combat_rsc = selecting_option(('Rage', 'Energy', 'Traces', 'Divine Grace'), "Enter the option that corresponds to the modifier's combat type: ")
+        access_key = input("Enter the name of the Modifier's Access Key: ").strip()
+        normal_atk_name = input("Enter the name of the Normal Attack: ").strip()
+        skill1_name = input("Enter the name of Skill 1: ").strip()
+        skill2_name = input("Enter the name of Skill 2: ").strip()
+        skill3_name = input("Enter the name of Skill 3: ").strip()
+        ult_skill_name = input("Enter the name of the Ultimate Skill: ").strip()
+        dodge_skill_name = input("Enter the name of the Dodge Skill: ").strip()
+        print(f'''INSERT INTO modifier
+            ({', '.join(tuple(column for column in locals().keys() if column != 'connection'))}) VALUES ({', '.join(tuple("?" for column in locals().keys() if column != 'connection'))});''',
+            tuple(value for value in locals().values() if isinstance(value, str)))
+        connection.execute(f'''INSERT INTO modifier
+            ({', '.join(tuple(column for column in locals().keys() if column != 'connection'))}) VALUES ({', '.join(tuple("?" for column in locals().keys() if column != 'connection'))});''',
+            tuple(value for value in locals().values() if isinstance(value, str)))
+        connection.commit()
+        return 0
     except ValueError:
+        return 1
+    except sqlite3.Error as e:
+        print("An Error occured while inserting into the Database: ", str(e))
         return 1
 
 
@@ -155,12 +165,12 @@ def insert_data(connection:sqlite3.Connection) -> int:
     }
     print("Which table would you like to insert data into?")
     for key,value in _OPTIONS_TO_TABLES.items():
-        print(key, value)
+        print(key, value.__name__)
     try:
         response = input("Please enter the ID for the table you wish to interact with. ").strip()
         if "." not in response and 1 <= int(response) <= 6:
             print("You'll now be asked to enter the corresponding data into the table. Follow all prompts.")
-            call:int = _OPTIONS_TO_TABLES(response)(connection)
+            call:int = _OPTIONS_TO_TABLES[int(response)](connection)
             return call
         print("Error: Invalid Response.")
     except ValueError:
