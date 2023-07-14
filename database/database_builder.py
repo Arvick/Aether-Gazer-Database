@@ -79,11 +79,24 @@ def _create_tables(connection:sqlite3.Connection) -> None:
         connection.commit()
 
 
+def selecting_option(options:tuple[str], prompt:str) -> str:
+    """A general-purpose function for listing out a series of options (with enumerate), and selecting a choice.
+    The chosen option is returned. A prompt can be included for readability."""
+    for index, option in enumerate(options):
+        print(index, option)
+    choice = input(prompt).strip()
+    if "." not in choice:
+        try:
+            return options[int(choice)]
+        except ValueError:
+            pass
+    raise ValueError
 
 
 def insert_modifier() -> int:
     """For inserting data into the table 'modifier'.
-    This function will ask for the parameters as outlined by the SQL table"""
+    This function will ask for the parameters as outlined by the SQL table.
+    If an error code arises while accepting data, a error code (1) is returned."""
     '''name TEXT NOT NULL CHECK (length(name) > 0),
             modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
             combat_type TEXT NOT NULL CHECK (combat_type IN ('Melee', 'Ranged')),
@@ -97,9 +110,12 @@ def insert_modifier() -> int:
             skill3_name TEXT NOT NULL CHECK (length(skill3_name) > 0),
             ult_skill_name TEXT NOT NULL CHECK (length(ult_skill_name) > 0),
             dodge_skill_name TEXT NOT NULL CHECK (length(dodge_skill_name) > 0),'''
-    name = input("Enter the real name of the modifier here: ").strip().capitalize()
-    modifier_name = input("Enter the name of the modifier (NOT their original name) here: ").strip().capitalize()
-    
+    try:
+        name = input("Enter the real name of the modifier here: ").strip().capitalize()
+        modifier_name = input("Enter the name of the modifier (NOT their original name) here: ").strip().capitalize()
+    except ValueError:
+        return 1
+
 
 
 def insert_sigil() -> int:
