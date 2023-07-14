@@ -82,7 +82,8 @@ def _create_tables(connection:sqlite3.Connection) -> None:
 
 
 def insert_modifier() -> int:
-    pass
+    """For inserting data into the table 'modifier'.
+    This function will ask for the parameters as outlined by the SQL table"""
 
 
 def insert_sigil() -> int:
@@ -105,7 +106,7 @@ def insert_aether_code() -> int:
     pass
 
 
-def insert_data() -> int:
+def insert_data(connection:sqlite3.Connection) -> int:
     """A central function for handling SQL queries
     for inserting data.
     This function will redirect to 1 of 6 functions, each for the different tables.
@@ -126,7 +127,7 @@ def insert_data() -> int:
     try:
         response = input("Please enter the ID for the table you wish to interact with. ").strip()
         if "." not in response and 1 <= int(response) <= 6:
-            call:int = _OPTIONS_TO_TABLES(response)()
+            call:int = _OPTIONS_TO_TABLES(response)(connection)
             return call
         print("Error: Invalid Response.")
     except ValueError:
@@ -153,7 +154,7 @@ insert data into the databases?")
     connection = create_connection()
     _create_tables(connection)
     while response == "Y":
-        call:int = insert_data()
+        call:int = insert_data(connection)
         if not call:
             print("Operation successful.")
         else:
