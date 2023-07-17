@@ -66,7 +66,7 @@ def _create_tables(connection:sqlite3.Connection) -> None:
             ac_type TEXT NOT NULL CHECK (ac_type IN ('RED', 'YELLOW', 'BLUE')),
             ac_slot INTEGER NOT NULL CHECK (ac_slot >= 1 AND ac_slot <= 3),
             ac_desc TEXT NOT NULL CHECK (length(ac_desc) > 0),
-            modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
+            modifier_name TEXT NOT NULL CHECK (length(modifier_name) > 0),
             PRIMARY KEY (modifier_name, ac_type, ac_slot),
             FOREIGN KEY (modifier_name) REFERENCES modifier(modifier_name)
         ) STRICT;
@@ -200,6 +200,7 @@ If no such type exists, select the blank option: ")
             ({', '.join(tuple(column for column in locals().keys() if column != 'connection'))}) VALUES ({', '.join(tuple("?" for column in locals().keys() if column != 'connection'))});''',
             tuple(value for value in locals().values() if isinstance(value, (str, int))))
         connection.commit()
+        return 0
     except ValueError:
         return 1
     except sqlite3.Error as e:
@@ -207,8 +208,23 @@ If no such type exists, select the blank option: ")
         return 1
 
 
-def insert_aether_code() -> int:
-    pass
+def insert_aether_code(connection:sqlite3.Connection) -> int:
+    """This function is responsible for inserting data into the aether_code table."""
+    try:
+        ac_type = selecting_option(('RED', 'YELLOW', 'BLUE'), "Please enter the option for what color this Aether Code falls under: ")
+        ac_slot = int(input("Enter the slot for this aether code (1 = closest to center, 3 = farthest out): ").strip())
+        ac_desc = input("Enter the description of this Aether Code: ").strip()
+        modifier_name = input("Enter the name of the modifier that this Aether Code is associated with: ").strip()
+        connection.execute(f'''INSERT INTO aether_codes
+            ({', '.join(tuple(column for column in locals().keys() if column != 'connection'))}) VALUES ({', '.join(tuple("?" for column in locals().keys() if column != 'connection'))});''',
+            tuple(value for value in locals().values() if isinstance(value, (str, int))))
+        connection.commit()
+        return 0
+    except ValueError:
+        return 1
+    except sqlite3.Error as e:
+        print("An Error occured while inserting into the Database: ", str(e))
+        return 1
 
 
 def insert_data(connection:sqlite3.Connection) -> int:
