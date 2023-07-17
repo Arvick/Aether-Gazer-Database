@@ -42,12 +42,11 @@ def _create_tables(connection:sqlite3.Connection) -> None:
         CREATE TABLE IF NOT EXISTS functor(
             functor_name TEXT NOT NULL UNIQUE CHECK (length(functor_name) > 0),
             gen_zone TEXT NOT NULL CHECK (gen_zone IN ('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim')),
-            tier INTEGER NOT NULL CHECK (tier >=3 AND tier <= 5),
+            rarity INTEGER NOT NULL CHECK (rarity >=3 AND rarity <= 5),
             functor_power_desc TEXT NOT NULL CHECK (length(functor_power_desc) > 0),
             functor_lore TEXT NOT NULL CHECK (length(functor_lore) > 0),
-            sig_modifier TEXT NOT NULL UNIQUE CHECK (length(sig_modifier) > 0),
-            PRIMARY KEY (functor_name, sig_modifier),
-            FOREIGN KEY (sig_modifier) REFERENCES modifier(modifier_name)
+            sig_modifier TEXT NULL UNIQUE CHECK (length(sig_modifier) > 0),
+            PRIMARY KEY (functor_name, gen_zone)
         ) STRICT; ''',
         '''
         CREATE TABLE IF NOT EXISTS skill(
@@ -161,8 +160,7 @@ def insert_sigil_modifier(connection:sqlite3.Connection) -> int:
         print("An Error occured while inserting into the Database: ", str(e))
         return 1
 
-def insert_functor() -> int:
-    pass
+
 
 
 def insert_skill() -> int:
