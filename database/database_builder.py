@@ -112,9 +112,6 @@ def insert_modifier(connection:sqlite3.Connection) -> int:
         skill3_name = input("Enter the name of Skill 3: ").strip()
         ult_skill_name = input("Enter the name of the Ultimate Skill: ").strip()
         dodge_skill_name = input("Enter the name of the Dodge Skill: ").strip()
-        print(f'''INSERT INTO modifier
-            ({', '.join(tuple(column for column in locals().keys() if column != 'connection'))}) VALUES ({', '.join(tuple("?" for column in locals().keys() if column != 'connection'))});''',
-            tuple(value for value in locals().values() if isinstance(value, str)))
         connection.execute(f'''INSERT INTO modifier
             ({', '.join(tuple(column for column in locals().keys() if column != 'connection'))}) VALUES ({', '.join(tuple("?" for column in locals().keys() if column != 'connection'))});''',
             tuple(value for value in locals().values() if isinstance(value, str)))
@@ -128,8 +125,24 @@ def insert_modifier(connection:sqlite3.Connection) -> int:
 
 
 
-def insert_sigil() -> int:
-    pass
+def insert_sigil(connection:sqlite3.Connection) -> int:
+    """This function handles inserting of data into the sigil table.
+    It will ask for the name of the sigil set, as well as its effects.
+    If an error occurs when attempting to insert data, an error code is returned."""
+    '''set_name TEXT NOT NULL PRIMARY KEY CHECK (length(set_name) > 0),
+            set_effects TEXT NOT NULL CHECK (length(set_effects) > 0)'''
+    try:
+        set_name = input("Enter the name of the sigil set: ").strip()
+        set_effects = input("Enter the effects of the sigil set: ").strip()
+        connection.execute(f'''INSERT INTO sigil
+            ({', '.join(tuple(column for column in locals().keys() if column != 'connection'))}) VALUES ({', '.join(tuple("?" for column in locals().keys() if column != 'connection'))});''',
+            tuple(value for value in locals().values() if isinstance(value, str)))
+        connection.commit()
+        return 0
+    except sqlite3.Error as e:
+        print("An Error occured while inserting into the Database: ", str(e))
+        return 1
+
 
 
 def insert_sigil_modifier() -> int:
