@@ -161,7 +161,28 @@ def insert_sigil_modifier(connection:sqlite3.Connection) -> int:
         return 1
 
 
-
+def insert_functor(connection:sqlite3.Connection) -> int:
+    """This function inserts data into the functor table.
+    It will ask for functor_name, gen_zone, tier, description, lore, and the reccomended modifier."""
+    try:
+        functor_name = input("Enter the name of the functor: ").strip()
+        gen_zone = selecting_option(('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim'), "Enter the option that corresponds to the Gen-Zone of the functor: ")
+        rarity = int(input("Enter the rarity of the functor (3, 4, or 5): ").strip())
+        functor_power_desc = input("Enter the description of the Functor Power: ").strip()
+        functor_lore = input("Enter the lore of the Functor here: ").strip()
+        sig_modifier = input("Enter the name of this functor's reccomended modifier, or leave it blank if there is none: ").strip()
+        if not sig_modifier:
+            sig_modifier = None
+        connection.execute(f'''INSERT INTO functor
+            ({', '.join(tuple(column for column in locals().keys() if column != 'connection'))}) VALUES ({', '.join(tuple("?" for column in locals().keys() if column != 'connection'))});''',
+            tuple(value for value in locals().values() if isinstance(value, (str, int, type(None)))))
+        connection.commit()
+        return 0
+    except ValueError:
+        return 1
+    except sqlite3.Error as e:
+        print("An Error occured while inserting into the Database: ", str(e))
+        return 1
 
 def insert_skill() -> int:
     pass
