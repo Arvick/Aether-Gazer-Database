@@ -54,10 +54,10 @@ def _create_tables(connection:sqlite3.Connection) -> None:
             skill_desc TEXT NOT NULL CHECK (length(skill_desc) > 0),
             slot TEXT NOT NULL CHECK (slot IN ('normal_atk', 'skill1', 'skill2', 'skill3', 'ult_skill', 'dodge_skill')),
             skill_cd INTEGER NOT NULL CHECK (skill_cd >= 0),
-            skill_cost_type TEXT NOT NULL CHECK (skill_cost_type IN ('Rage', 'Energy', 'Traces', 'Divine Grace')),
+            skill_cost_type TEXT NOT NULL CHECK (skill_cost_type IN ('Rage', 'Energy', 'Traces', 'Divine Grace', '')),
             skill_cost_quant INTEGER NOT NULL CHECK (skill_cost_quant >= 0),
-            skill_type TEXT NOT NULL CHECK (skill_type IN ('Evolving', 'Set-up', 'Divergent', 'Switch', 'Channeling', 'Charge')),
-            modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
+            skill_type TEXT NOT NULL CHECK (skill_type IN ('Evolving', 'Set-up', 'Divergent', 'Switch', 'Channeling', 'Charge', '')),
+            modifier_name TEXT NOT NULL CHECK (length(modifier_name) > 0),
             PRIMARY KEY (skill_name, modifier_name),
             FOREIGN KEY (modifier_name) REFERENCES modifier(modifier_name)
         ) STRICT; ''',
@@ -184,8 +184,7 @@ def insert_functor(connection:sqlite3.Connection) -> int:
         print("An Error occured while inserting into the Database: ", str(e))
         return 1
 
-def insert_skill() -> int:
-    pass
+
 
 
 def insert_aether_code() -> int:
