@@ -184,7 +184,27 @@ def insert_functor(connection:sqlite3.Connection) -> int:
         print("An Error occured while inserting into the Database: ", str(e))
         return 1
 
-
+def insert_skill(connection:sqlite3.Connection) -> int:
+    """This function inserts data into the skill table."""
+    try:
+        skill_name = input("Please enter the skill's name: ").strip()
+        skill_desc = input("Please enter the description for the skill: ").strip()
+        slot = selecting_option(('normal_atk', 'skill1', 'skill2', 'skill3', 'ult_skill', 'dodge_skill'), "Please enter which slot this skill falls under (ult = ultimate): ")
+        skill_cd = int(input("Please enter the CD of the skill (if there is none, enter 0): ").strip())
+        skill_cost_type = selecting_option(('Rage', 'Energy', 'Traces', 'Divine Grace' , ''), "Enter the type of resource the skill uses. If it doesn't use a resource, select the blank option: ").strip()
+        skill_cost_quant = int(input("Enter how much of the resource is used. If the selected choice to the last prompt was blank, enter 0: ").strip())
+        skill_type = selecting_option(('Evolving', 'Set-up', 'Divergent', 'Switch', 'Channeling', 'Charge', ''), "Enter what type is associated with the skill. \
+If no such type exists, select the blank option: ")
+        modifier_name = input("Enter the name of the modifier associated with this skill: ").strip()
+        connection.execute(f'''INSERT INTO skill
+            ({', '.join(tuple(column for column in locals().keys() if column != 'connection'))}) VALUES ({', '.join(tuple("?" for column in locals().keys() if column != 'connection'))});''',
+            tuple(value for value in locals().values() if isinstance(value, (str, int))))
+        connection.commit()
+    except ValueError:
+        return 1
+    except sqlite3.Error as e:
+        print("An Error occured while inserting into the Database: ", str(e))
+        return 1
 
 
 def insert_aether_code() -> int:
