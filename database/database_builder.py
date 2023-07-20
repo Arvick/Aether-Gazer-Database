@@ -12,7 +12,7 @@ def _create_tables(connection:sqlite3.Connection) -> None:
             name TEXT NOT NULL CHECK (length(name) > 0),
             modifier_name TEXT NOT NULL UNIQUE CHECK (length(modifier_name) > 0),
             combat_type TEXT NOT NULL CHECK (combat_type IN ('Melee', 'Ranged')),
-            gen_zone TEXT NOT NULL CHECK (gen_zone IN ('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim')),
+            gen_zone TEXT NOT NULL CHECK (gen_zone IN ('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim', 'Tianyuan')),
             dmg_type TEXT NOT NULL CHECK (dmg_type IN ('Physical', 'Wind', 'Fire', 'Thunder', 'Shadow', 'Light', 'Ice', 'Water')),
             combat_rsc TEXT NOT NULL CHECK (combat_rsc IN ('Rage', 'Energy', 'Traces', 'Divine Grace')),
             access_key TEXT NOT NULL CHECK (length(access_key) > 0),
@@ -41,7 +41,7 @@ def _create_tables(connection:sqlite3.Connection) -> None:
         '''
         CREATE TABLE IF NOT EXISTS functor(
             functor_name TEXT NOT NULL UNIQUE CHECK (length(functor_name) > 0),
-            gen_zone TEXT NOT NULL CHECK (gen_zone IN ('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim')),
+            gen_zone TEXT NOT NULL CHECK (gen_zone IN ('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim', 'Tianyuan')),
             rarity INTEGER NOT NULL CHECK (rarity >=3 AND rarity <= 5),
             functor_power_desc TEXT NOT NULL CHECK (length(functor_power_desc) > 0),
             functor_lore TEXT NOT NULL CHECK (length(functor_lore) > 0),
@@ -101,7 +101,7 @@ def insert_modifier(connection:sqlite3.Connection) -> int:
         name = input("Enter the real name of the modifier here: ").strip()
         modifier_name = input("Enter the name of the modifier (NOT their original name) here: ").strip()
         combat_type = selecting_option(('Melee', 'Ranged'), "Enter the option that corresponds to the Modifier's combat type: ")
-        gen_zone = selecting_option(('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim'), "Enter the option that corresponds to the Gen-Zone of the modifier: ")
+        gen_zone = selecting_option(('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim', 'Tianyuan'), "Enter the option that corresponds to the Gen-Zone of the modifier: ")
         dmg_type = selecting_option(('Physical', 'Wind', 'Fire', 'Thunder', 'Shadow', 'Light', 'Ice', 'Water'), "Enter the option that corresponds to the modifier's damage type: ")
         combat_rsc = selecting_option(('Rage', 'Energy', 'Traces', 'Divine Grace'), "Enter the option that corresponds to the modifier's combat type: ")
         access_key = input("Enter the name of the Modifier's Access Key: ").strip()
@@ -166,7 +166,7 @@ def insert_functor(connection:sqlite3.Connection) -> int:
     It will ask for functor_name, gen_zone, tier, description, lore, and the reccomended modifier."""
     try:
         functor_name = input("Enter the name of the functor: ").strip()
-        gen_zone = selecting_option(('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim'), "Enter the option that corresponds to the Gen-Zone of the functor: ")
+        gen_zone = selecting_option(('Olympus', 'Nile', 'Shinou', 'Yggdrasil', 'Asterim', 'Tianyuan'), "Enter the option that corresponds to the Gen-Zone of the functor: ")
         rarity = int(input("Enter the rarity of the functor (3, 4, or 5): ").strip())
         functor_power_desc = input("Enter the description of the Functor Power: ").strip()
         functor_lore = input("Enter the lore of the Functor here: ").strip()
