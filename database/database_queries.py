@@ -21,7 +21,7 @@ sigil: search by
 '''
 from pathlib import Path
 import sqlite3
-from database_builder import create_connection
+
 
 PATH_TO_DB = Path.cwd() / "aether_gazer.db"
 
@@ -29,7 +29,7 @@ def connection_decorator(func:function):
     """A decorator function that creates a connection to the database,
     executes the function, then closes the connection"""
     def execute(*args, **kwargs):
-        connection:sqlite3.Connection = create_connection()
+        connection:sqlite3.Connection = sqlite3.connect(PATH_TO_DB)
         result = func(connection, *args, **kwargs)
         connection.close()
         return result
