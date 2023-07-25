@@ -26,26 +26,33 @@ from database_builder import create_connection
 PATH_TO_DB = Path.cwd() / "aether_gazer.db"
 
 def connection_decorator(func:function):
-    pass
+    """A decorator function that creates a connection to the database,
+    executes the function, then closes the connection"""
+    def execute(*args, **kwargs):
+        connection:sqlite3.Connection = create_connection()
+        result = func(connection, *args, **kwargs)
+        connection.close()
+        return result
+    return execute
 
+
+@connection_decorator
 def _mod_search():
     pass
 
 
+@connection_decorator
 def _functor_search():
     pass
 
 
+@connection_decorator
 def _sigil_search():
     pass
 
 
 def interface():
-    connection:sqlite3.Connection = create_connection()
-
-
-
-    connection.close()
+    pass
 
 if __name__ == "__main__":
     print(PATH_TO_DB)
