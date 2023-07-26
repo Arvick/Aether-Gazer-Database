@@ -1,7 +1,7 @@
 """This module contains the class for Modifiers for keeping track of/returning each one's information."""
 from dataclasses import dataclass, asdict
 
-@dataclass(frozen=True, kw_only=True)
+@dataclass(frozen=True)
 class Modifier:
     codename: str
     name: str

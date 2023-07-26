@@ -17,11 +17,6 @@ class test_init(unittest.TestCase):
         self.assertEqual(temp.access_key, "Arm of Asura")
 
 
-    def test_positional_args_not_allowed(self):
-        with self.assertRaises(TypeError):
-            m("Rahu", "Asura", "Ranged", "Asterim", "Fire", "Energy", "Arm of Asura")
-
-
     def cannot_change_frozen_fields(self):
         temp = m(codename="Rahu", name="Asura", combat_type="Ranged",
                 gen_zone="Asterim", dmg_type="Fire", combat_rsc="Energy",
