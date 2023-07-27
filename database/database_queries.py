@@ -37,13 +37,6 @@ def connection_decorator(func):
         return result
     return execute
 
-#TODO: write class for Modifier
-#TODO: Separate classes/modules/tests for sigils, functors
-'''
-SELECT s.set_name, s.set_effects, sm.odd_or_even FROM sigil AS s
-INNER JOIN sigil_modifier AS sm ON sm.set_name = s.set_name
-WHERE sm.modifier_name = "Rahu";
-'''
 
 def _add_sigils(results:list[dict[str:str]], connection:sqlite3.Connection,
                         statement:str,/) -> None:
@@ -112,7 +105,7 @@ def _add_aether_codes(results:list[dict[str:str]], connection:sqlite3.Connection
 
 
 @connection_decorator
-def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int]) -> list[dict[str|int]]:
+def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int], /) -> list[dict[str|int]]:
     """Makes a SELECT query to the 'modifier' table and returns the infomration of each 
     result in the form of dictionaries."""
     query_result = connection.execute(
@@ -140,9 +133,32 @@ def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int]) -> list[d
 
 
 @connection_decorator
-def _functor_search():
-    # TODO: add dict for ATK boosts based on rarity
-    pass
+def _functor_search(connection:sqlite3.Connection, args:dict[str:str|int], /) -> list[dict[str|int]]:
+    """Sends a SELECT query to the database, and returns all functors that meet the criteria."""
+    _RARITY_ATK_BOOST = {
+        3: (10, 30),
+        4: (15, 60),
+        5: (20, 100)
+    }
+    query_result = connection.execute(
+        f'''SELECT * FROM functor WHERE {'=? AND '.join([f'{key}' for key in args.keys()])}=?;''',
+                list(args.values()))
+    results = []
+    latest = query_result.fetchone()
+    while latest is not None:
+        temp_res = {
+            "name": latest[0],
+            "gen_zone": latest[1],
+            "rarity": latest[2],
+            "access_key_boost": f'{_RARITY_ATK_BOOST[latest[2]][0]}%',
+            "atk_boost": _RARITY_ATK_BOOST[latest[2]][1],
+            "functor_desc": latest[3],
+            "functor_lore": latest[4],
+            "sig_modifier": latest[5] if latest[5] else "N/A"
+        }
+        results.append(temp_res)
+        latest = query_result.fetchone()
+    return results
 
 
 @connection_decorator
@@ -156,4 +172,5 @@ def interface():
 if __name__ == "__main__":
     print(PATH_TO_DB)
     print(json.dumps(_mod_search({"name": "Asura"}), indent=4, ensure_ascii=False))
+    print(json.dumps(_functor_search({"gen_zone": "Asterim"}), indent = 2, ensure_ascii=False))
 
