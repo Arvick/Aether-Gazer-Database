@@ -45,6 +45,22 @@ INNER JOIN sigil_modifier AS sm ON sm.set_name = s.set_name
 WHERE sm.modifier_name = "Rahu";
 '''
 
+def _add_sigils(results:list[dict[str:str]], connection:sqlite3.Connection,
+                        statement:str) -> None:
+    """adds the reccomended sigil sets to each modifier result"""
+    for idx in range(len(results)):
+        query_result = connection.execute(statement, [results[idx]["codename"]])
+        new_results = sorted(query_result.fetchall(), key = lambda x: x [-1])
+        results[idx] |= {
+            "rec_sigils":{
+                "even": {"name": new_results[0][0],
+                        "effect": new_results[0][1]},
+                "odd": {"name": new_results[1][0],
+                        "effect": new_results[1][1]}
+            }
+        }
+
+
 @connection_decorator
 def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int]) -> list[dict[str|int]]:
     """Makes a SELECT query to the 'modifier' table and returns the infomration of each 
@@ -60,20 +76,10 @@ def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int]) -> list[d
     while latest is not None:
         results.append(Modifier(*latest).give_repr())
         latest = query_result.fetchone()
-    for idx in range(len(results)):
-        query_result = connection.execute(f'''
+    _add_sigils(results, connection, '''
         SELECT s.set_name, s.set_effects, sm.odd_or_even FROM sigil AS s
         INNER JOIN sigil_modifier AS sm ON sm.set_name = s.set_name
-        WHERE sm.modifier_name =?;''', [results[idx]["codename"]])
-        new_results = sorted(query_result.fetchall(), key = lambda x: x [-1])
-        results[idx] |= {
-            "rec_sigils":{
-                "even": {"name": new_results[0][0],
-                        "effect": new_results[0][1]},
-                "odd": {"name": new_results[1][0],
-                        "effect": new_results[1][1]}
-            }
-        }
+        WHERE sm.modifier_name =?;''')
     for idx in range(len(results)):
         query_result = connection.execute(
             f'''SELECT functor_name, functor_power_desc, functor_lore FROM functor
