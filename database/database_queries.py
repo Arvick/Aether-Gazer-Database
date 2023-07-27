@@ -21,6 +21,7 @@ sigil: search by
 '''
 from pathlib import Path
 import sqlite3
+import json
 from modifier_class import Modifier
 
 
@@ -66,11 +67,55 @@ def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int]) -> list[d
         WHERE sm.modifier_name =?;''', [results[idx]["codename"]])
         new_results = sorted(query_result.fetchall(), key = lambda x: x [-1])
         results[idx] |= {
-            "recommended sigil set: even": f"{new_results[0][0]}: {new_results[0][1]}",
-            "recommended sigil set: odd": f"{new_results[1][0]}: {new_results[1][1]}"
+            "rec_sigils":{
+                "even": {"name": new_results[0][0],
+                        "effect": new_results[0][1]},
+                "odd": {"name": new_results[1][0],
+                        "effect": new_results[1][1]}
+            }
         }
     for idx in range(len(results)):
-        query_result = connection.execute
+        query_result = connection.execute(
+            f'''SELECT functor_name, functor_power_desc, functor_lore FROM functor
+            WHERE sig_modifier = ?;''', [results[idx]["codename"]])
+        functor_res = query_result.fetchone()
+        results[idx] |= {
+            "sig_functor":{
+                "name": functor_res[0],
+                "effect": functor_res[1],
+                "lore":functor_res[2]
+            }
+        }
+    for idx in range(len(results)):
+        query_result = connection.execute(
+            '''SELECT skill_name, skill_desc, slot,
+                skill_cd, skill_cost_type, skill_cost_quant,
+                skill_type
+                    FROM skill    
+                    WHERE modifier_name = ?;''', [results[idx]["codename"]])
+        skill_res = query_result.fetchone()
+        results[idx]["skills"] = {}
+        while skill_res is not None:
+            results[idx]["skills"] |= {
+                skill_res[2]: {
+                    "name": skill_res[0],
+                    "effect": skill_res[1],
+                    "skill_cd": skill_res[3] if skill_res[3] else "N/A",
+                    "skill_cost_type": skill_res[4] if skill_res[4] else "N/A",
+                    "skill_cost_quant": skill_res[5] if skill_res[5] else "N/A",
+                    "skill_type": skill_res[6] if skill_res[6] else "N/A"
+                }
+            }
+            skill_res = query_result.fetchone()
+    for idx in range(len(results)):
+        query_result = connection.execute(
+            '''SELECT ac_type, ac_slot, ac_desc FROM aether_codes
+            WHERE modifier_name =?;''', [results[idx]["codename"]])
+        ac_res = query_result.fetchone()
+        results[idx]["aether_codes"] = {"red":{}, "blue":{}, "yellow":{}}
+        while ac_res is not None:
+            results[idx]["aether_codes"][ac_res[0].lower()][ac_res[1]] = ac_res[2]
+            ac_res = query_result.fetchone()
     return results
 
 
@@ -90,7 +135,5 @@ def interface():
 
 if __name__ == "__main__":
     print(PATH_TO_DB)
-    print(_mod_search({"name": "Asura"}))
-    
+    print(json.dumps(_mod_search({"name": "Asura"}), indent=4, ensure_ascii=False))
 
-    #TODO: unpack param names and tuple into a new dict 
