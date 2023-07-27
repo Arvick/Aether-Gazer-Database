@@ -61,6 +61,22 @@ def _add_sigils(results:list[dict[str:str]], connection:sqlite3.Connection,
         }
 
 
+def _add_functor(results:list[dict[str:str]], connection:sqlite3.Connection,
+                        statement:str) -> None:
+    """adds the signature functor to each modifier result"""
+    for idx in range(len(results)):
+        query_result = connection.execute(
+            statement, [results[idx]["codename"]])
+        functor_res = query_result.fetchone()
+        results[idx] |= {
+            "sig_functor":{
+                "name": functor_res[0],
+                "effect": functor_res[1],
+                "lore":functor_res[2]
+            }
+        }
+
+
 @connection_decorator
 def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int]) -> list[dict[str|int]]:
     """Makes a SELECT query to the 'modifier' table and returns the infomration of each 
@@ -80,18 +96,8 @@ def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int]) -> list[d
         SELECT s.set_name, s.set_effects, sm.odd_or_even FROM sigil AS s
         INNER JOIN sigil_modifier AS sm ON sm.set_name = s.set_name
         WHERE sm.modifier_name =?;''')
-    for idx in range(len(results)):
-        query_result = connection.execute(
-            f'''SELECT functor_name, functor_power_desc, functor_lore FROM functor
-            WHERE sig_modifier = ?;''', [results[idx]["codename"]])
-        functor_res = query_result.fetchone()
-        results[idx] |= {
-            "sig_functor":{
-                "name": functor_res[0],
-                "effect": functor_res[1],
-                "lore":functor_res[2]
-            }
-        }
+    _add_functor(results, connection, '''SELECT functor_name, functor_power_desc, functor_lore FROM functor
+        WHERE sig_modifier = ?;''')
     for idx in range(len(results)):
         query_result = connection.execute(
             '''SELECT skill_name, skill_desc, slot,
