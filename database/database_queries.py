@@ -77,6 +77,27 @@ def _add_functor(results:list[dict[str:str]], connection:sqlite3.Connection,
         }
 
 
+def _add_skill(results:list[dict[str:str]], connection:sqlite3.Connection,
+                        statement:str) -> None:
+    """adds the skills of each modifier to each result"""
+    for idx in range(len(results)):
+        query_result = connection.execute(statement, [results[idx]["codename"]])
+        skill_res = query_result.fetchone()
+        results[idx]["skills"] = {}
+        while skill_res is not None:
+            results[idx]["skills"] |= {
+                skill_res[2]: {
+                    "name": skill_res[0],
+                    "effect": skill_res[1],
+                    "skill_cd": skill_res[3] if skill_res[3] else "N/A",
+                    "skill_cost_type": skill_res[4] if skill_res[4] else "N/A",
+                    "skill_cost_quant": skill_res[5] if skill_res[5] else "N/A",
+                    "skill_type": skill_res[6] if skill_res[6] else "N/A"
+                }
+            }
+            skill_res = query_result.fetchone()
+
+
 @connection_decorator
 def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int]) -> list[dict[str|int]]:
     """Makes a SELECT query to the 'modifier' table and returns the infomration of each 
@@ -98,27 +119,8 @@ def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int]) -> list[d
         WHERE sm.modifier_name =?;''')
     _add_functor(results, connection, '''SELECT functor_name, functor_power_desc, functor_lore FROM functor
         WHERE sig_modifier = ?;''')
-    for idx in range(len(results)):
-        query_result = connection.execute(
-            '''SELECT skill_name, skill_desc, slot,
-                skill_cd, skill_cost_type, skill_cost_quant,
-                skill_type
-                    FROM skill    
-                    WHERE modifier_name = ?;''', [results[idx]["codename"]])
-        skill_res = query_result.fetchone()
-        results[idx]["skills"] = {}
-        while skill_res is not None:
-            results[idx]["skills"] |= {
-                skill_res[2]: {
-                    "name": skill_res[0],
-                    "effect": skill_res[1],
-                    "skill_cd": skill_res[3] if skill_res[3] else "N/A",
-                    "skill_cost_type": skill_res[4] if skill_res[4] else "N/A",
-                    "skill_cost_quant": skill_res[5] if skill_res[5] else "N/A",
-                    "skill_type": skill_res[6] if skill_res[6] else "N/A"
-                }
-            }
-            skill_res = query_result.fetchone()
+    _add_skill(results, connection, '''SELECT skill_name, skill_desc, slot,
+    skill_cd, skill_cost_type, skill_cost_quant, skill_type FROM skill WHERE modifier_name = ?;''')
     for idx in range(len(results)):
         query_result = connection.execute(
             '''SELECT ac_type, ac_slot, ac_desc FROM aether_codes
