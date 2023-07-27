@@ -46,7 +46,7 @@ WHERE sm.modifier_name = "Rahu";
 '''
 
 def _add_sigils(results:list[dict[str:str]], connection:sqlite3.Connection,
-                        statement:str) -> None:
+                        statement:str,/) -> None:
     """adds the reccomended sigil sets to each modifier result"""
     for idx in range(len(results)):
         query_result = connection.execute(statement, [results[idx]["codename"]])
@@ -62,7 +62,7 @@ def _add_sigils(results:list[dict[str:str]], connection:sqlite3.Connection,
 
 
 def _add_functor(results:list[dict[str:str]], connection:sqlite3.Connection,
-                        statement:str) -> None:
+                        statement:str,/) -> None:
     """adds the signature functor to each modifier result"""
     for idx in range(len(results)):
         query_result = connection.execute(
@@ -78,7 +78,7 @@ def _add_functor(results:list[dict[str:str]], connection:sqlite3.Connection,
 
 
 def _add_skill(results:list[dict[str:str]], connection:sqlite3.Connection,
-                        statement:str) -> None:
+                        statement:str,/) -> None:
     """adds the skills of each modifier to each result"""
     for idx in range(len(results)):
         query_result = connection.execute(statement, [results[idx]["codename"]])
@@ -96,6 +96,19 @@ def _add_skill(results:list[dict[str:str]], connection:sqlite3.Connection,
                 }
             }
             skill_res = query_result.fetchone()
+
+
+def _add_aether_codes(results:list[dict[str:str]], connection:sqlite3.Connection,
+                        statement:str,/) -> None:
+    """adds all aether codes to each modifier results"""
+    for idx in range(len(results)):
+        query_result = connection.execute(
+            statement, [results[idx]["codename"]])
+        ac_res = query_result.fetchone()
+        results[idx]["aether_codes"] = {"red":{}, "blue":{}, "yellow":{}}
+        while ac_res is not None:
+            results[idx]["aether_codes"][ac_res[0].lower()][ac_res[1]] = ac_res[2]
+            ac_res = query_result.fetchone()
 
 
 @connection_decorator
@@ -121,15 +134,8 @@ def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int]) -> list[d
         WHERE sig_modifier = ?;''')
     _add_skill(results, connection, '''SELECT skill_name, skill_desc, slot,
     skill_cd, skill_cost_type, skill_cost_quant, skill_type FROM skill WHERE modifier_name = ?;''')
-    for idx in range(len(results)):
-        query_result = connection.execute(
-            '''SELECT ac_type, ac_slot, ac_desc FROM aether_codes
-            WHERE modifier_name =?;''', [results[idx]["codename"]])
-        ac_res = query_result.fetchone()
-        results[idx]["aether_codes"] = {"red":{}, "blue":{}, "yellow":{}}
-        while ac_res is not None:
-            results[idx]["aether_codes"][ac_res[0].lower()][ac_res[1]] = ac_res[2]
-            ac_res = query_result.fetchone()
+    _add_aether_codes(results, connection, '''SELECT ac_type, ac_slot, ac_desc FROM aether_codes
+            WHERE modifier_name =?;''')
     return results
 
 
