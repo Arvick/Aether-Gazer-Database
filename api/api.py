@@ -53,10 +53,7 @@ class Modifier(Resource):
         in a dict"""
     def get(self) -> list[dict]:
         data = database_queries.query_interface("mod", {key : value for key,value in dict(mod_get_args.parse_args()).items() if value})
-        if data:
-            return data, 200
-        return {"error":
-                "if you see this, implement just displaying everything."}, 404
+        return data, 200
 
 API.add_resource(Modifier, "/mod")
 

@@ -108,12 +108,16 @@ def _add_aether_codes(results:list[dict[str:str]], connection:sqlite3.Connection
 def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int], /) -> list[dict[str|int]]:
     """Makes a SELECT query to the 'modifier' table and returns the infomration of each 
     result in the form of dictionaries."""
-    query_result = connection.execute(
-        f'''SELECT modifier_name, name, combat_type, gen_zone,
-            dmg_type, combat_rsc, access_key
-                FROM modifier
-                WHERE {'=? AND '.join([f'{key}' for key in args.keys()])}=?;''',
-                list(args.values()))
+    if args:
+        query_result = connection.execute(
+            f'''SELECT modifier_name, name, combat_type, gen_zone,
+                dmg_type, combat_rsc, access_key
+                    FROM modifier
+                    WHERE {'=? AND '.join([f'{key}' for key in args.keys()])}=?;''',
+                    list(args.values()))
+    else:
+        query_result = connection.execute('''SELECT  modifier_name, name, combat_type, gen_zone,
+                                            dmg_type, combat_rsc, access_key FROM modifier;''')
     results = []
     latest = query_result.fetchone()
     while latest is not None:
