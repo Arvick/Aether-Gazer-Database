@@ -44,13 +44,14 @@ mod_get_args.add_argument("combat_rsc", type = str, required = False)
 
 
 class Modifier(Resource):
-    """This class is for handling modifier requests.
+    """This class is for handling modifier requests, and retrives
+    all functors that meet the conditions specified in arguments.
     
     GET:
         The arguments are parsed (with None values being filtered out)
         and sent to the SQL query function to get the data, which is formatted and returned
         in a dict"""
-    def get(self):
+    def get(self) -> list[dict]:
         data = database_queries.query_interface("mod", {key : value for key,value in dict(mod_get_args.parse_args()).items() if value})
         if data:
             return data, 200
@@ -58,6 +59,28 @@ class Modifier(Resource):
                 "if you see this, implement just displaying everything."}, 404
 
 API.add_resource(Modifier, "/mod")
+
+
+
+functor_get_args = reqparse.RequestParser()
+functor_get_args.add_argument("name", type = str, required = False)
+functor_get_args.add_argument("gen_zone", type = str, required = False)
+functor_get_args.add_argument("sig_modifier", type = str, required = False)
+functor_get_args.add_argument("rarity", type = int, required = False)
+
+class Functor(Resource):
+    """This class is for handling functor requests, and retrives
+    all functors that meet the conditions specified in arguments"""
+
+    def get(self) -> list[dict]:
+        data = database_queries.query_interface("functor", {key : value for key,value in dict(functor_get_args.parse_args()).items() if value})
+        if data:
+            return data, 200
+        return {"error":
+                "if you see this, implement just displaying everything."}, 404
+
+API.add_resource(Functor, "/func")
+
 
 def run():
     """runs the API."""
