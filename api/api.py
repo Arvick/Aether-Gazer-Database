@@ -82,6 +82,25 @@ class Functor(Resource):
 API.add_resource(Functor, "/func")
 
 
+sigil_get_args = reqparse.RequestParser()
+sigil_get_args.add_argument("set_name", type = str, required = False)
+sigil_get_args.add_argument("keyword", type = str, required = False)
+
+class Sigil(Resource):
+    """This class is for handling sigil requests, and retrives
+    all sigil sets that meet the conditions specified in arguments"""
+
+    def get(self) -> list[dict]:
+        data = database_queries.query_interface("sigil", {key : value for key,value in dict(sigil_get_args.parse_args()).items() if value})
+        if data:
+            return data, 200
+        return {"error":
+                "if you see this, implement just displaying everything."}, 404
+
+API.add_resource(Sigil, "/sigil")
+
+
+
 def run():
     """runs the API."""
     MAIN_APP.run(debug=False)
