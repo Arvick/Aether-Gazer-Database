@@ -134,7 +134,7 @@ def _mod_search(connection:sqlite3.Connection, args:dict[str:str|int], /) -> lis
 
 @connection_decorator
 def _functor_search(connection:sqlite3.Connection, args:dict[str:str|int], /) -> list[dict[str|int]]:
-    """Sends a SELECT query to the database, and returns all functors that meet the criteria."""
+    """Sends a SELECT query to the functor table, and returns all functors that meet the criteria."""
     _RARITY_ATK_BOOST = {
         3: (10, 30),
         4: (15, 60),
@@ -162,8 +162,32 @@ def _functor_search(connection:sqlite3.Connection, args:dict[str:str|int], /) ->
 
 
 @connection_decorator
-def _sigil_search():
-    pass
+def _sigil_search(connection:sqlite3.Connection, args:dict[str:str|int], /) -> list[dict[str|int]]:
+    """Sends a SELECT query to the sigil table, and returns all functors that meet the criteria."""
+    sql_statement = ['''SELECT * FROM sigil''']
+    query_args = []
+    if "set_name" in args:
+        sql_statement.append("WHERE set_name = ?")
+        query_args.append(args["set_name"])
+    if "keyword" in args:
+        if len(args) > 1:
+            sql_statement.append("AND set_effects LIKE ?")
+        else:
+            sql_statement.append("WHERE set_effects LIKE ?")
+        query_args.append(f'%{args["keyword"]}%')
+    sql_statement.append(";")
+    print(' '.join(sql_statement), query_args)
+    query_result = connection.execute(' '.join(sql_statement), query_args)
+    results = []
+    latest = query_result.fetchone()
+    while latest is not None:
+        temp_res = {
+            "name": latest[0],
+            "effect": latest[1]
+        }
+        results.append(temp_res)
+        latest = query_result.fetchone()
+    return results
 
 
 def interface():
@@ -171,6 +195,7 @@ def interface():
 
 if __name__ == "__main__":
     print(PATH_TO_DB)
-    print(json.dumps(_mod_search({"name": "Asura"}), indent=4, ensure_ascii=False))
+    print(json.dumps(_mod_search({"name": "Asura", "gen_zone":"Asterim"}), indent=4, ensure_ascii=False))
     print(json.dumps(_functor_search({"gen_zone": "Asterim"}), indent = 2, ensure_ascii=False))
+    print(json.dumps(_sigil_search({"set_name": "Prometheus' Flame", "keyword": "Fire"}), indent= 2, ensure_ascii= False))
 
