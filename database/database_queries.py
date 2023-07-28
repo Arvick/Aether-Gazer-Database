@@ -144,9 +144,12 @@ def _functor_search(connection:sqlite3.Connection, args:dict[str:str|int], /) ->
         4: (15, 60),
         5: (20, 100)
     }
-    query_result = connection.execute(
-        f'''SELECT * FROM functor WHERE {'=? AND '.join([f'{key}' for key in args.keys()])}=?;''',
-                list(args.values()))
+    if args:
+        query_result = connection.execute(
+            f'''SELECT * FROM functor WHERE {'=? AND '.join([f'{key}' for key in args.keys()])}=?;''',
+                    list(args.values()))
+    else:
+        query_result = connection.execute('''SELECT  * FROM functor;''')
     results = []
     latest = query_result.fetchone()
     while latest is not None:
