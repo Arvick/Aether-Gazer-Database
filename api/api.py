@@ -32,6 +32,36 @@ class Resourcename(Resource):
 MAIN_APP = Flask(__name__)
 API = Api(MAIN_APP)
 
+@MAIN_APP.route("/")
+def home():
+    """Represents the home page of the API. 
+    Provides a welcome message + navigation guide."""
+    return '''Welcome to the Aether Gazer API.
+
+Basic Commands:
+    mod: looks up modifiers ++++++++++
+        - Optional Arguments:
+            1. name (name of modifier)
+            2. modifier_name (modifier's codename)
+            3. gen_zone (modifier's Gen-Zone)
+            4. combat type (modifier's combat type (meele or ranged))
+            5. dmg_type (modifier's damage type (fire, water, etc.))
+            6. combat_rsc (modifier's used combat resource (energy, rage, etc.))
+---------------------------------------------------------------------------------
+    functor: looks up functors +++++++++++
+        - Optional Arguments
+            1. functor_name (name of functor)
+            2. gen_zone (functor's Gen-Zone)
+            3. sig_modifier (recommended modifier of Functor
+                if it has none, enter N/A)
+            4. rarity (of functor: 3, 4, or 5)
+----------------------------------------------------------------------------------------
+    sigil: looks up sigil sets ++++++++++++++
+        - Optional Arguments
+            1. set_name: name of the sigil set
+            2. keyword: a keyword in the sigil set's description
+'''
+
 
 mod_get_args = reqparse.RequestParser()
 mod_get_args.add_argument("name", type = str, required = False)
@@ -60,7 +90,7 @@ API.add_resource(Modifier, "/mod")
 
 
 functor_get_args = reqparse.RequestParser()
-functor_get_args.add_argument("name", type = str, required = False)
+functor_get_args.add_argument("functor_name", type = str, required = False)
 functor_get_args.add_argument("gen_zone", type = str, required = False)
 functor_get_args.add_argument("sig_modifier", type = str, required = False)
 functor_get_args.add_argument("rarity", type = int, required = False)
