@@ -22,8 +22,8 @@ sigil: search by
 from pathlib import Path
 import sqlite3
 import json
-from modifier_class import Modifier
-
+from .modifier_class import Modifier
+# ^ remove the "." in front of modifier_class to work directly here
 
 PATH_TO_DB = Path.cwd() / "aether_gazer.db"
 
@@ -176,7 +176,6 @@ def _sigil_search(connection:sqlite3.Connection, args:dict[str:str|int], /) -> l
             sql_statement.append("WHERE set_effects LIKE ?")
         query_args.append(f'%{args["keyword"]}%')
     sql_statement.append(";")
-    print(' '.join(sql_statement), query_args)
     query_result = connection.execute(' '.join(sql_statement), query_args)
     results = []
     latest = query_result.fetchone()
@@ -200,14 +199,15 @@ def query_interface(kwd:str, args:dict[str:int|str]) -> json.dumps:
         "functor": [_functor_search, 2],
         "sigil": [_sigil_search, 2]
     }
-    return json.dumps(_KWD_TO_DICT[kwd][0](args), indent= _KWD_TO_DICT[kwd][1], ensure_ascii= False)
+    # json.dumps(_KWD_TO_DICT[kwd][0](args), indent= _KWD_TO_DICT[kwd][1], ensure_ascii= False)
+    return _KWD_TO_DICT[kwd][0](args)
 
 
 if __name__ == "__main__":
     # print(PATH_TO_DB)
-    # print(json.dumps(_mod_search({"name": "Asura", "gen_zone":"Asterim"}), indent=4, ensure_ascii=False))
+    print(json.dumps(_mod_search({"name": "Asura", "gen_zone":"Asterim"}), indent=4, ensure_ascii=False))
     #print(json.dumps(_functor_search({"gen_zone": "Asterim"}), indent = 2, ensure_ascii=False))
     #print(json.dumps(_sigil_search({"set_name": "Prometheus' Flame", "keyword": "Fire"}), indent= 2, ensure_ascii= False))
-    print(query_interface("mod", {"name": "Asura", "gen_zone":"Asterim"}))
+    # print(query_interface("mod", {"name": "Asura", "gen_zone":"Asterim"}))
 
 __all__ = [query_interface.__name__]
