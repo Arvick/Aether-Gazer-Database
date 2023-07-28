@@ -190,12 +190,24 @@ def _sigil_search(connection:sqlite3.Connection, args:dict[str:str|int], /) -> l
     return results
 
 
-def interface():
-    pass
+def query_interface(kwd:str, args:dict[str:int|str]) -> json.dumps:
+    """This function acts as a public interface for other modules, and redirects the function call
+    for the queries to the appropriate function.
+    
+    Results are returned in JSON form for readability."""
+    _KWD_TO_DICT = {
+        "mod": [_mod_search, 4],
+        "functor": [_functor_search, 2],
+        "sigil": [_sigil_search, 2]
+    }
+    return json.dumps(_KWD_TO_DICT[kwd][0](args), indent= _KWD_TO_DICT[kwd][1], ensure_ascii= False)
+
 
 if __name__ == "__main__":
-    print(PATH_TO_DB)
-    print(json.dumps(_mod_search({"name": "Asura", "gen_zone":"Asterim"}), indent=4, ensure_ascii=False))
-    print(json.dumps(_functor_search({"gen_zone": "Asterim"}), indent = 2, ensure_ascii=False))
-    print(json.dumps(_sigil_search({"set_name": "Prometheus' Flame", "keyword": "Fire"}), indent= 2, ensure_ascii= False))
+    # print(PATH_TO_DB)
+    # print(json.dumps(_mod_search({"name": "Asura", "gen_zone":"Asterim"}), indent=4, ensure_ascii=False))
+    #print(json.dumps(_functor_search({"gen_zone": "Asterim"}), indent = 2, ensure_ascii=False))
+    #print(json.dumps(_sigil_search({"set_name": "Prometheus' Flame", "keyword": "Fire"}), indent= 2, ensure_ascii= False))
+    print(query_interface("mod", {"name": "Asura", "gen_zone":"Asterim"}))
 
+__all__ = [query_interface.__name__]
