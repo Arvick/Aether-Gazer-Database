@@ -117,10 +117,8 @@ class Sigil(Resource):
 
     def get(self) -> list[dict]:
         data = database_queries.query_interface("sigil", {key : value for key,value in dict(sigil_get_args.parse_args()).items() if value})
-        if data:
-            return data, 200
-        return {"error":
-                "if you see this, implement just displaying everything."}, 404
+        return data
+
 
 API.add_resource(Sigil, "/sigil")
 
