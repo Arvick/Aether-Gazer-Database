@@ -37,7 +37,7 @@
     </div>
   </nav>
     <main>
-      <h1 align="center">Aether Gazer: Lookup</h1>
+      <h1 align="center">Aether Gazer: Resource</h1>
       <section>
         <h2 align="center">Modifier Lookup</h2>
         <!-- TODO: point the action form towards the API or get the selected options to API-->
@@ -89,6 +89,21 @@
           <input type="text" name="name" placeholder="Name of modifier">
           <input type="text" name="modifier_name" placeholder="Codename of modifier">
           <div><button type="submit">Submit</button></div>
+        </form>
+      </section>
+      <section>
+        <h2 align="center">Functor Lookup</h2>
+        <form align="center" action="http://127.0.0.1:8001/func" method="get">
+          <fieldset>
+            <legend>Gen-Zone</legend>
+            <label><input id="olympus" type="radio" name="gen_zone" value="Olympus">Olympus</label>
+            <label><input id="nile" type="radio" name="gen_zone" value="Nile"> Nile</label>
+            <label><input id="shinou" type="radio" name="gen_zone" value="Shinou">Shinou</label>
+            <label><input id="yggdrasil" type="radio" name="gen_zone" value="Yggdrasil">Yggdrasil</label>
+            <label><input id="asterim" type="radio" name="gen_zone" value="Asterim">Asterim</label>
+            <label><input id="tianyuan" type="radio" name="gen_zone" value="Tianyuan">Tianyuan</label>
+            <label><input id="n/a" type="radio" name="gen_zone" value="">N/A (select to exclude this filter)</label>
+          </fieldset>
         </form>
       </section>
     </main>
