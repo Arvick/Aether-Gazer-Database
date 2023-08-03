@@ -72,13 +72,23 @@
             <label><input id="n/a" type="radio" name="dmg_type" value="">N/A (select to exclude this filter)</label>
           </fieldset>
           <fieldset>
+            <legend>Combat Resource</legend>
+            <label><input id="rage" type="radio" name="combat_rsc" value="Rage">Rage</label>
+            <label><input id="energy" type="radio" name="combat_rsc" value="Energy">Energy</label>
+            <label><input id="traces" type="radio" name="combat_rsc" value="Traces">Traces</label>
+            <label><input id="divine_grace" type="radio" name="combat_rsc" value="Divine Grace">Divine Grace</label>
+            <label><input id="n/a" type="radio" name="combat_rsc" value="">N/A (select to exclude this filter)</label>
+          </fieldset>
+          <!--
+          <fieldset>
             <legend>Enter blah blah blah</legend>
             <input id="loving" type="checkbox" name="personality" value="loving" checked> <label for="loving">Loving</label>
             <input id="lazy" type="checkbox" name="personality" value="lazy"> <label for="lazy">Lazy</label>
             <input id="energetic" type="checkbox" name="personality" value="energetic"> <label for="energetic">Energetic</label>
-          </fieldset>
-          <input type="text" name="catphotourl" placeholder="cat photo URL">
-          <button type="submit">Submit</button>
+          </fieldset>-->
+          <input type="text" name="name" placeholder="Name of modifier">
+          <input type="text" name="modifier_name" placeholder="Codename of modifier">
+          <div><button type="submit">Submit</button></div>
         </form>
       </section>
     </main>
