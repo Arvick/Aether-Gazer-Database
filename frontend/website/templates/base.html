@@ -39,13 +39,18 @@
     <main>
       <h1 align="center">Aether Gazer: Lookup</h1>
       <section>
-        <h2 align="center">Form</h2>
+        <h2 align="center">Modifier Lookup</h2>
         <!-- TODO: point the action form towards the API or get the selected options to API-->
-        <form align="center" action="https://freecatphotoapp.com/submit-cat-photo">
+        <!-- TODO:separate forms, for mod, func, and sigil-->
+        <form align="center" action="http://127.0.0.1:8001/mod" method="get">
           <fieldset>
-            <legend>Enter blah blah blah</legend>
-            <label><input id="indoor" type="radio" name="indoor-outdoor" value="indoor" checked> Indoor</label>
-            <label><input id="outdoor" type="radio" name="indoor-outdoor" value="outdoor"> Outdoor</label>
+            <legend>Gen-Zone</legend>
+            <label><input id="Olympus" type="radio" name="gen_zone" value="Olympus" checked>Olympus</label>
+            <label><input id="Nile" type="radio" name="gen_zone" value="Nile"> Nile</label>
+            <label><input id="Shinou" type="radio" name="gen_zone" value="Shinou">Shinou</label>
+            <label><input id="Yggdrasil" type="radio" name="gen_zone" value="Yggdrasil">Yggdrasil</label>
+            <label><input id="Asterim" type="radio" name="gen_zone" value="Asterim">Asterim</label>
+            <label><input id="Tianyuan" type="radio" name="gen_zone" value="Tianyuan">Tianyuan</label>
           </fieldset>
           <fieldset>
             <legend>Enter blah blah blah</legend>
