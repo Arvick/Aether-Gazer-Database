@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request
+import requests
 
 views = Blueprint('views', __name__)
 
@@ -11,7 +12,7 @@ def home():
 def modifiers():
     data = request.args
     print(dict(data))
-    return render_template("mod.html")
+    return render_template("mod.html", func=requests.get)
 
 '''
 dict(data) v

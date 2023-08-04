@@ -2,5 +2,16 @@
 
 
 {% block content%}
+{% set args_dict = {} %}
+{% for key, value in dict(request.args).items() %}
+    {% if value %}
+        {%set _dummy=args_dict.update({key:value})%}
+    {% endif %}
+{%endfor%}
+<!-- TODO: figure out why call below keeps retrying-->
+{% set res = func("http://127.0.0.1:5000/mod", args_dict, headers = {'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36'}) %}
+{% for result in res%}
+    <h2>{{ result["modifier_name"] }}</h2>
+{%endfor%}
 <h1>WMOPJOIOWIOSSSS</h1>
 {% endblock %}
