@@ -36,13 +36,14 @@
       </div>
     </div>
   </nav>
+  {% block content %}
     <main>
       <h1 align="center">Aether Gazer: Resource</h1>
       <section>
         <h2 align="center">Modifier Lookup</h2>
         <!-- TODO: point the action form towards the API or get the selected options to API-->
         <!-- TODO:separate forms, for mod, func, and sigil-->
-        <form align="center" action="http://127.0.0.1:8001/mod" method="get">
+        <form align="center" action="/mod" method="get">
           <fieldset>
             <legend>Gen-Zone</legend>
             <label><input id="olympus" type="radio" name="gen_zone" value="Olympus">Olympus</label>
@@ -122,6 +123,7 @@
         </form>
       </section>
     </main>
+    {% endblock %}
     <script
       src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
       integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
