@@ -121,6 +121,27 @@
                     {% endif %}                
                 </ul>
         </ul>
+        <h2>Aether Codes</h2>
+        <ul>
+            <p>Red</p>
+                <ol>
+                    {% for item in result["aether_codes"]["red"].values() %}
+                    <li>{{item}}</li>
+                    {% endfor %}
+                </ol>
+            <p>Blue</p>
+                <ol>
+                    {% for item in result["aether_codes"]["blue"].values() %}
+                    <li>{{item}}</li>
+                    {% endfor %}
+                </ol>
+            <p>Yellow</p>
+                <ol>
+                    {% for item in result["aether_codes"]["yellow"].values() %}
+                    <li>{{item}}</li>
+                    {% endfor %}
+                </ol>
+        </ul>
     </div>
 {%endfor%}
 {% endblock %}
