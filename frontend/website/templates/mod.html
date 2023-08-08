@@ -30,11 +30,95 @@
                     {% if result["skills"]["normal_atk"]["skill_cd"] == "N/A" %}
                         {% set cooldown = 0 %}
                     {% else %}
-                        {% set cooldown = result["skills"]["normal_atk"]["skill_cd"] %}'
+                        {% set cooldown = result["skills"]["normal_atk"]["skill_cd"] %}
                     {% endif %}
-                    <li>Cooldown (in seconds): {{ cooldown }}s</li>
-
-
+                    <li>Cooldown: {{ cooldown }}s</li>
+                    {% if result["skills"]["normal_atk"]["skill_cost_quant"] != "N/A" %}
+                    <li>Cost: {{ result["skills"]["normal_atk"]["skill_cost_quant"] }} {{ result["skills"]["normal_atk"]["skill_cost_type"] }}</li>
+                    {% endif %}
+                    {% if result["skills"]["normal_atk"]["skill_type"] != "N/A" %}
+                    <li>Skill Type: {{ result["skills"]["normal_atk"]["skill_type"] }}</li>
+                    {% endif %}
+                </ul>
+            <li> Skill 1: {{ result["skills"]["skill1"]["name"] }}</li>
+                <ul>
+                    <li>Effect: {{ result["skills"]["skill1"]["effect"] }}</li>
+                    {% if result["skills"]["skill1"]["skill_cd"] == "N/A" %}
+                        {% set cooldown = 0 %}
+                    {% else %}
+                        {% set cooldown = result["skills"]["skill1"]["skill_cd"] %}
+                    {% endif %}
+                    <li>Cooldown: {{ cooldown }}s</li>
+                    {% if result["skills"]["skill1"]["skill_cost_quant"] != "N/A" %}
+                    <li>Cost: {{ result["skills"]["skill1"]["skill_cost_quant"] }} {{ result["skills"]["skill1"]["skill_cost_type"] }}</li>
+                    {% endif %}
+                    {% if result["skills"]["skill1"]["skill_type"] != "N/A" %}
+                    <li>Skill Type: {{ result["skills"]["skill1"]["skill_type"] }}</li>
+                    {% endif %}                
+                </ul>
+            <li> Skill 2: {{ result["skills"]["skill2"]["name"] }}</li>
+                <ul>
+                    <li>Effect: {{ result["skills"]["skill2"]["effect"] }}</li>
+                    {% if result["skills"]["skill2"]["skill_cd"] == "N/A" %}
+                        {% set cooldown = 0 %}
+                    {% else %}
+                        {% set cooldown = result["skills"]["skill2"]["skill_cd"] %}
+                    {% endif %}
+                    <li>Cooldown: {{ cooldown }}s</li>
+                    {% if result["skills"]["skill2"]["skill_cost_quant"] != "N/A" %}
+                    <li>Cost: {{ result["skills"]["skill2"]["skill_cost_quant"] }} {{ result["skills"]["skill2"]["skill_cost_type"] }}</li>
+                    {% endif %}
+                    {% if result["skills"]["skill2"]["skill_type"] != "N/A" %}
+                    <li>Skill Type: {{ result["skills"]["skill2"]["skill_type"] }}</li>
+                    {% endif %}                
+                </ul>
+            <li> Skill 3: {{ result["skills"]["skill3"]["name"] }}</li>
+                <ul>
+                    <li>Effect: {{ result["skills"]["skill3"]["effect"] }}</li>
+                    {% if result["skills"]["skill3"]["skill_cd"] == "N/A" %}
+                        {% set cooldown = 0 %}
+                    {% else %}
+                        {% set cooldown = result["skills"]["skill3"]["skill_cd"] %}
+                    {% endif %}
+                    <li>Cooldown: {{ cooldown }}s</li>
+                    {% if result["skills"]["skill3"]["skill_cost_quant"] != "N/A" %}
+                    <li>Cost: {{ result["skills"]["skill3"]["skill_cost_quant"] }} {{ result["skills"]["skill3"]["skill_cost_type"] }}</li>
+                    {% endif %}
+                    {% if result["skills"]["skill3"]["skill_type"] != "N/A" %}
+                    <li>Skill Type: {{ result["skills"]["skill3"]["skill_type"] }}</li>
+                    {% endif %}                
+                </ul>
+            <li> Ultimate: {{ result["skills"]["ult_skill"]["name"] }}</li>
+                <ul>
+                    <li>Effect: {{ result["skills"]["ult_skill"]["effect"] }}</li>
+                    {% if result["skills"]["ult_skill"]["skill_cd"] == "N/A" %}
+                        {% set cooldown = 0 %}
+                    {% else %}
+                        {% set cooldown = result["skills"]["ult_skill"]["skill_cd"] %}
+                    {% endif %}
+                    <li>Cooldown: {{ cooldown }}s</li>
+                    {% if result["skills"]["ult_skill"]["skill_cost_quant"] != "N/A" %}
+                    <li>Cost: {{ result["skills"]["ult_skill"]["skill_cost_quant"] }} {{ result["skills"]["ult_skill"]["skill_cost_type"] }}</li>
+                    {% endif %}
+                    {% if result["skills"]["ult_skill"]["skill_type"] != "N/A" %}
+                    <li>Skill Type: {{ result["skills"]["ult_skill"]["skill_type"] }}</li>
+                    {% endif %}                
+                </ul>
+            <li> Dodge Skill: {{ result["skills"]["dodge_skill"]["name"] }}</li>
+                <ul>
+                    <li>Effect: {{ result["skills"]["dodge_skill"]["effect"] }}</li>
+                    {% if result["skills"]["dodge_skill"]["skill_cd"] == "N/A" %}
+                        {% set cooldown = 0 %}
+                    {% else %}
+                        {% set cooldown = result["skills"]["dodge_skill"]["skill_cd"] %}
+                    {% endif %}
+                    <li>Cooldown: {{ cooldown }}s</li>
+                    {% if result["skills"]["dodge_skill"]["skill_cost_quant"] != "N/A" %}
+                    <li>Cost: {{ result["skills"]["dodge_skill"]["skill_cost_quant"] }} {{ result["skills"]["dodge_skill"]["skill_cost_type"] }}</li>
+                    {% endif %}
+                    {% if result["skills"]["dodge_skill"]["skill_type"] != "N/A" %}
+                    <li>Skill Type: {{ result["skills"]["dodge_skill"]["skill_type"] }}</li>
+                    {% endif %}                
                 </ul>
         </ul>
     </div>
