@@ -13,7 +13,30 @@
 {% for result in res.json()%}
     <div class="container">
         <h1>{{ result["codename"] }}: {{ result["name"] }}</h1>
+        <h2>{{ result["gen_zone"] }} | {{ result["combat_type"] }} | {{ result["dmg_type"] }} | {{ result["combat_rsc"] }}</h2>
+        <h3>Access Key: {{ result["access_key"] }}</h3>
+        <h2>Recommended Sigil Sets</h2>
+        <ul>
+            <li>Even: {{ result["rec_sigils"]["even"]["name"] }} -- {{ result["rec_sigils"]["even"]["effect"] }}</li>
+            <li>Odd: {{ result["rec_sigils"]["odd"]["name"] }} -- {{ result["rec_sigils"]["odd"]["effect"] }}</li>
+        </ul>
+        <h2>Signature Functor: {{ result["sig_functor"]["name"] }}</h2>
+        <p>{{ result["sig_functor"]["effect"] }}</p>
+        <h2>Skills</h2>
+        <ul>
+            <li>Normal Skill: {{ result["skills"]["normal_atk"]["name"] }}</li>
+                <ul>
+                    <li>Effect: {{ result["skills"]["normal_atk"]["effect"] }}</li>
+                    {% if result["skills"]["normal_atk"]["skill_cd"] == "N/A" %}
+                        {% set cooldown = 0 %}
+                    {% else %}
+                        {% set cooldown = result["skills"]["normal_atk"]["skill_cd"] %}'
+                    {% endif %}
+                    <li>Cooldown (in seconds): {{ cooldown }}s</li>
 
+
+                </ul>
+        </ul>
     </div>
 {%endfor%}
 {% endblock %}
