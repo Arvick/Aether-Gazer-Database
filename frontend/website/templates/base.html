@@ -41,8 +41,6 @@
       <h1 align="center">Aether Gazer: Resource</h1>
       <section>
         <h2 align="center">Modifier Lookup</h2>
-        <!-- TODO: point the action form towards the API or get the selected options to API-->
-        <!-- TODO:separate forms, for mod, func, and sigil-->
         <form align="center" action="/mod" method="get">
           <fieldset>
             <legend>Gen-Zone</legend>
@@ -116,7 +114,7 @@
       </section>
       <section>
         <h2 align="center">Sigil Lookup</h2>
-        <form align="center" action="http://127.0.0.1:8001/sigil" method="get">
+        <form align="center" action="/sigil" method="get">
           <input type="text" name="set_name" placeholder="Name of sigil">
           <input type="text" name="keyword" placeholder="Keyword in sigil set effect">
           <div><button type="submit">Submit</button></div>

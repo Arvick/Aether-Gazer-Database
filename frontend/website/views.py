@@ -16,6 +16,11 @@ def modifiers():
 def functors():
     return render_template("func.html", func=requests.get)
 
+@views.route("/sigil")
+def sigils():
+    return render_template("sigil.html", func=requests.get)
+
+
 '''
 dict(data) v
 {'gen_zone': 'Asterim', 'combat_type': 'Ranged', 'dmg_type': 'Fire', 'combat_rsc': 'Energy', 'name': '', 
