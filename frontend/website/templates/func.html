@@ -1,0 +1,27 @@
+{% extends "base.html" %} 
+
+
+{% block content%}
+{% set args_dict = {} %}
+{% for key, value in dict(request.args).items() %}
+    {% if value %}
+        {%set _dummy=args_dict.update({key:value})%}
+    {% endif %}
+{%endfor%}
+<h1 align="center">Results: </h1>
+{% set res = func("http://127.0.0.1:8001/func", args_dict, headers = {'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36'}) %}
+{% for result in res.json()%}
+    <div class="container">
+        <h1>{{ result["name"]}}</h1>
+        <h2>{{ result["gen_zone"]}} | {{ result["rarity"]}}*</h2>
+        <h2>Access Key Boost: {{ result["access_key_boost"]}} | ATK Boost: {{ result["atk_boost"]}}</h2>
+        <h2>Effect</h2>
+            <p>{{ result["functor_desc"]}}</p>
+        <h2>Lore</h2>
+            <p>{{ result["functor_lore"]}}</p>
+        {% if result["sig_modifier"] != "N/A" %}
+        <h2> Signature Modifier: {{ result["sig_modifier"] }}</h2>
+        {% endif %}
+    </div>
+{%endfor%}
+{% endblock %}

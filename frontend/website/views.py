@@ -10,9 +10,11 @@ def home():
 
 @views.route("/mod")
 def modifiers():
-    data = request.args
-    print(dict(data))
     return render_template("mod.html", func=requests.get)
+
+@views.route("/func")
+def functors():
+    return render_template("func.html", func=requests.get)
 
 '''
 dict(data) v
